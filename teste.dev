@@ -1,62 +1,154 @@
-[Project]
-FileName=teste.dev
-Name=teste
-Type=1
-Ver=2
-ObjFiles=
-Includes=
-Libs=
-PrivateResource=
-ResourceIncludes=
-MakeIncludes=
-Compiler=
-CppCompiler=
-Linker=
-IsCpp=0
-Icon=
-ExeOutput=
-ObjectOutput=
-LogOutput=
-LogOutputEnabled=0
-OverrideOutput=0
-OverrideOutputName=
-HostApplication=
-UseCustomMakefile=0
-CustomMakefile=
-CommandLine=
-Folders=
-IncludeVersionInfo=0
-SupportXPThemes=0
-CompilerSet=0
-CompilerSettings=0000000000000000000000000
-UnitCount=1
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-[VersionInfo]
-Major=1
-Minor=0
-Release=0
-Build=0
-LanguageID=1033
-CharsetID=1252
-CompanyName=
-FileVersion=
-FileDescription=Developed using the Dev-C++ IDE
-InternalName=
-LegalCopyright=
-LegalTrademarks=
-OriginalFilename=
-ProductName=
-ProductVersion=
-AutoIncBuildNr=0
-SyncProduct=1
+void imprimirMatriz(char matriz[3][3]) {
+int i,j;
+printf("\n 1 2 3\n");
+printf(" -------\n");
 
-[Unit1]
-FileName=main.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
+for(i = 0; i < 3; i++) {
+    printf("%d|", i+1);
+    
+    for(j = 0; j < 3; j++) {
+	    printf("%c ", matriz[i][j]);
+}
+	printf("\n");
+}
+	printf(" -------\n");
+} 
 
+void jogar() {
+int i,j;
+int jogadas = 0;
+char vezDoJogador = 'X';
+char matriz[3][3] = {
+{'-', '-', '-'},
+{'-', '-', '-'},
+{'-', '-', '-'}
+};
+
+imprimirMatriz(matriz);
+
+for(i = 0; i < 3; i++) {
+    for(j = 0; j < 3; j++) {
+        int linha, coluna;
+        printf("\nVez do jogador %c\n", vezDoJogador);
+        do {
+            printf("Digite a linha (1 a 3): ");
+            scanf("%d", &linha);
+
+            while(linha < 1 || linha > 3) {
+                printf("Entrada inválida. Digite novamente a linha (1 a 3): ");
+                scanf("%d", &linha);
+            }
+
+            printf("Digite a coluna (1 a 3): ");
+            scanf("%d", &coluna);
+
+            while(coluna < 1 || coluna > 3) {
+                printf("Entrada inválida. Digite novamente a coluna (1 a 3): ");
+                scanf("%d", &coluna);
+            }
+
+            if(matriz[linha-1][coluna-1] != '-') {
+                printf("\nCélula já preenchida. Escolha outra.\n");
+            }
+
+        } while(matriz[linha-1][coluna-1] != '-');
+        
+        matriz[linha-1][coluna-1] = vezDoJogador;
+        jogadas++;
+        imprimirMatriz(matriz);
+
+        char ganhador = verificarGanhador(matriz);
+        if(ganhador != '-') {
+            printf("\nJogador %c ganhou!\n", ganhador);
+            return;
+        }
+
+        if(jogadas == 9) {
+            printf("\nEmpate!\n");
+            return;
+        }
+
+        if(vezDoJogador == 'X') {
+            vezDoJogador = 'O';
+        } else {
+            vezDoJogador = 'X';
+        }
+    }
+}
+
+}
+
+int main() {
+int opcao;
+char jogador1, jogador2;
+printf("Jogador 1: ");
+jogador1 = escolherSimbolo();
+jogador2 = (jogador1 == 'X') ? 'O' : 'X';
+do {
+printf("\n========== MENU ==========\n");
+printf("1 - Jogar\n");
+printf("2 - Sair\n");
+printf ("0-)Sair \n");
+printf("==========================\n");
+printf("Escolha uma opção: ");
+scanf("%d", &opcao);
+switch (opcao) {
+case 1:
+jogar();
+break;
+case 2:
+printf("\nSaindo do jogo...\n");
+limpar();
+break;
+default:
+printf("\nOpção inválida, tente novamente.\n");
+limpar();
+break;
+}
+} while (opcao != 2);
+return 0;
+}
+
+int escolherSimbolo() {
+char simbolo;
+printf("Escolha entre 'X' e 'O': ");
+scanf(" %c", &simbolo);
+while (simbolo != 'X' && simbolo != 'O') {
+printf("Escolha inválida. Por favor, escolha entre 'X' e 'O': ");
+scanf(" %c", &simbolo);
+limpar();
+}
+return simbolo;
+}
+
+void limpar()
+{
+    system ("clear || cls");
+}
+
+int verificarGanhador(char matriz[3][3]) {
+int i,j;
+for(i = 0; i < 3; i++) {
+if(matriz[i][0] == matriz[i][1] && matriz[i][1] == matriz[i][2] && matriz[i][0] != '-') {
+return matriz[i][0];
+}
+}
+for(j = 0; j < 3; j++) {
+    if(matriz[0][j] == matriz[1][j] && matriz[1][j] == matriz[2][j] && matriz[0][j] != '-') {
+        return matriz[0][j];
+    }
+}
+
+if(matriz[0][0] == matriz[1][1] && matriz[1][1] == matriz[2][2] && matriz[0][0] != '-') {
+    return matriz[0][0];
+}
+if(matriz[0][2] == matriz[1][1] && matriz[1][1] == matriz[2][0] && matriz[0][2] != '-') {
+    return matriz[0][2];
+}
+
+return '-';
+}
